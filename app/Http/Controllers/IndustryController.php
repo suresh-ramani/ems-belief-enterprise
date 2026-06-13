@@ -85,7 +85,10 @@ class IndustryController extends Controller
      */
     public function edit(Industry $industry)
     {
-        //
+        return view("industry.edit", [
+            'industry' => $industry,
+            'statusOptions' => $this->statusOptions()
+        ]);
     }
 
     /**
@@ -93,7 +96,29 @@ class IndustryController extends Controller
      */
     public function update(Request $request, Industry $industry)
     {
-        //
+        $request->validate([
+            'name' => 'required',
+            'owner_name' => "nullable",
+            'owner_email' => "nullable",
+            'owner_phone' => "nullable",
+            'status' => "required|in:".implode(",", StatusEnum::values()),
+            "address" => 'nullable'
+        ]);
+
+        try{
+            $industry->fill($request->post())->save();
+
+            return to_route("industries.index")->with([
+                'status' => 'success',
+                'message' => 'Industry Updated Successfully.'
+            ]);
+        }catch(\Exception $e){
+            report($e);
+            return back()->withInput()->with([
+                'status' => 'error',
+                'message' => 'Something goes wrong.'
+            ]);
+        }
     }
 
     /**

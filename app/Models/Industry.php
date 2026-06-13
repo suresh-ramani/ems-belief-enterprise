@@ -7,12 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 
-#[Fillable(['name', 'owner_name', 'owner_email', 'owner_phone', 'address'])]
+#[Fillable(['name', 'owner_name', 'owner_email', 'owner_phone', 'address', 'status'])]
 class Industry extends Model
 {
     use SoftDeletes;
 
-    public function casts()
+    protected function casts(): array
     {
         return [
             'status' => StatusEnum::class

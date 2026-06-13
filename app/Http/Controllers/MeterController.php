@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Meter\Status as StatusEnum;
+use App\Models\Industry;
 use App\Models\Meter;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class MeterController extends Controller
 {
@@ -12,7 +15,28 @@ class MeterController extends Controller
      */
     public function index()
     {
-        //
+        if(request()->ajax() && request()->wantsJson()){
+            return datatables()->of(Meter::with("industry"))
+                ->editColumn("status", function($meter){
+                    return $meter->status->badge();
+                })
+                ->editColumn("action", function($meter){
+                    return view("meter.datatable-action", compact("meter"))->render();
+                })
+                ->rawColumns(['action', 'status'])
+                ->make(true);
+        }
+        return view("meter.list");
+    }
+
+    private function statusOptions()
+    {
+        return StatusEnum::asOptions();
+    }
+
+    private function getIndustries()
+    {
+        return Industry::select("id", "name")->get();
     }
 
     /**
@@ -20,7 +44,10 @@ class MeterController extends Controller
      */
     public function create()
     {
-        //
+        return view("meter.create", [
+            'statusOptions' => $this->statusOptions(),
+            "industries" => $this->getIndustries(),
+        ]);
     }
 
     /**
@@ -28,7 +55,31 @@ class MeterController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            "industry_id" => "required",
+            "code" => "required|unique:meters,code",
+            "name" => "required",
+            "location" => "required",
+            "status" => "required"
+        ],[
+            "industry_id.required" => 'The industry field is required.'
+        ]);
+
+        try{
+            Meter::create($request->post());
+
+            return to_route("meters.index")
+                ->with([
+                    "status" => "success",
+                    "message" => "Meter Added Successfully."
+                ]);
+        }catch(\Exception $e){
+            report($e);
+            return back()->withInput()->with([
+                "status" => "error",
+                "message" => "Something went wrong."
+            ]);
+        }
     }
 
     /**
@@ -52,7 +103,34 @@ class MeterController extends Controller
      */
     public function update(Request $request, Meter $meter)
     {
-        //
+        $request->validate([
+            "industry_id" => "required",
+            'code' => [
+                'required',
+                Rule::unique('meters', 'code')->ignore($meter->id),
+            ],
+            "name" => "required",
+            "location" => "required",
+            "status" => "required"
+        ],[
+            "industry_id.required" => 'The industry field is required.'
+        ]);
+
+        try{
+            $meter->fill($request->post())->save();
+
+            return to_route("meters.index")
+                ->with([
+                    "status" => "success",
+                    "message" => "Meter Updated Successfully."
+                ]);
+        }catch(\Exception $e){
+            report($e);
+            return back()->withInput()->with([
+                "status" => "error",
+                "message" => "Something went wrong."
+            ]);
+        }
     }
 
     /**

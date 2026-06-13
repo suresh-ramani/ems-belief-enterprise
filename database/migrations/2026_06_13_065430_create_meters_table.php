@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('meters', function (Blueprint $table) {
             $table->id();
+            $table->string("code", 255)->nullable();
             $table->foreignId('industry_id')->constrained()->onDelete('cascade');
             $table->string('name', 255)->nullable();
             $table->string('location', 255)->nullable();
