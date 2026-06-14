@@ -10,6 +10,7 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -32,6 +33,16 @@ class User extends Authenticatable
             'password' => 'hashed',
             'role' => RoleEnum::class,
         ];
+    }
+
+    public function scopeNotSuperAdmin($query)
+    {
+        return $query->where('role', '!=', RoleEnum::SUPER_ADMIN->value);
+    }
+
+    public function scopeSuperAdmin($query)
+    {
+        return $query->where('role', RoleEnum::SUPER_ADMIN->value);
     }
 
     public function isSuperAdmin(): bool

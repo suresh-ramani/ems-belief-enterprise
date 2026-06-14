@@ -26,6 +26,15 @@ enum Role : string
         };
     }
 
+    public function badge(): string
+    {
+        return match ($this) {
+            self::SUPER_ADMIN => "<span class='badge badge-success'>".$this->label()."</span>",
+            self::ADMIN => "<span class='badge badge-warning'>".$this->label()."</span>",
+            self::USER => "<span class='badge badge-primary'>".$this->label()."</span>",
+        };
+    }
+
     public static function values(): array
     {
         return array_map(fn (self $status) => $status->value, self::cases());

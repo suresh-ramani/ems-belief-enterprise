@@ -1,14 +1,14 @@
 @extends('layouts.app', [
-    'title' => 'Meters',
+    'title' => 'Users',
     'breadcrumb' => [
-        'title' => 'Meters',
+        'title' => 'Users',
         'links' => [
             [
                 'title' => 'Home',
                 'url' => route("home")
             ],
             [
-                'title' => 'Meters',
+                'title' => 'Users',
                 'active' => true
             ]
         ]
@@ -27,10 +27,10 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">Meters</h3>
+                    <h3 class="card-title">Users</h3>
                     <div class="card-tools">
-                        <a href="{{ route("meters.create") }}" class="btn btn-secondary">
-                            Add Meter
+                        <a href="{{ route("users.create") }}" class="btn btn-secondary">
+                            Add User
                         </a>
                     </div>
                 </div>
@@ -38,12 +38,10 @@
                     <table id="datatable" class="table table-bordered">
                         <thead>
                             <tr>
-                                <th>Industry</th>
                                 <th>Name</th>
-                                <th>Code</th>
-                                <th>Location</th>
-                                <th>Last Reading At</th>
-                                <th>Status</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Total Assigned Meter</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -71,19 +69,17 @@
                 processing: true,
                 serverSide: true,
                 ajax: {
-                    url: "{{ route("meters.index") }}",
+                    url: "{{ route("users.index") }}",
                     type: 'GET',
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     }
                 },
                 columns: [
-                    { data: 'industry.name', name: 'industry', orderable: false, searchable: false },
                     { data: 'name', name: 'name' },
-                    { data: 'code', name: 'code' },
-                    { data: 'location', name: 'location' },
-                    { data: 'last_reading_at', name: 'last_reading_at', orderable: false, searchable: false, className: "text-center" },
-                    { data: 'status', name: 'status', orderable: false, searchable: false, className: "text-center" },
+                    { data: 'email', name: 'email' },
+                    { data: 'role', name: 'role', orderable: false, searchable: false, className: "text-center" },
+                    { data: 'meters_count', name: 'meters_count', orderable: false, searchable: false, className: "text-center" },
                     { data: 'action', name: 'action', orderable: false, searchable: false, className: "text-center" },
                 ]
             });

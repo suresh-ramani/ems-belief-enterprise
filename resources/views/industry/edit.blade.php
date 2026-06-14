@@ -95,7 +95,7 @@
                         </div>
                         <div class="row">
                             <div class="col-12">
-                                <button type="submit" class="btn btn-primary mr-2">Update</button>
+                                <button type="submit" class="btn btn-primary mr-2">Save</button>
                                 <a href="{{ route("industries.index") }}" class="btn btn-secondary">Cancel</a>
                             </div>
                         </div>

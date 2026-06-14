@@ -23,6 +23,9 @@ class MeterController extends Controller
                 ->editColumn("action", function($meter){
                     return view("meter.datatable-action", compact("meter"))->render();
                 })
+                ->editColumn("last_reading_at", function($meter){
+                    return $meter->last_reading_at ? $meter->last_reading_at->diffForHumans() : "-";
+                })
                 ->rawColumns(['action', 'status'])
                 ->make(true);
         }
@@ -95,7 +98,11 @@ class MeterController extends Controller
      */
     public function edit(Meter $meter)
     {
-        //
+        return view("meter.edit", [
+            "meter" => $meter,
+            'statusOptions' => $this->statusOptions(),
+            "industries" => $this->getIndustries(),
+        ]);
     }
 
     /**
@@ -138,6 +145,16 @@ class MeterController extends Controller
      */
     public function destroy(Meter $meter)
     {
-        //
+        try{
+            $meter->delete();
+            return response()->json([
+                "message" => "Meter Deleted Successfully."
+            ]);
+        }catch(\Exception $e){
+            report($e);
+            return response()->json([
+                "message" => "Something went wrong."
+            ], 500);
+        }
     }
 }

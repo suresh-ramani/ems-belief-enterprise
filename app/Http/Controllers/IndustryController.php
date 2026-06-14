@@ -135,7 +135,7 @@ class IndustryController extends Controller
             report($e);
             return response()->json([
                 'message' => "Something goes wrong."
-            ]);
+            ], 500);
         }
     }
 }
